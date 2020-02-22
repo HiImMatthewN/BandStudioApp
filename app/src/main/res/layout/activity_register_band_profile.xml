@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffff"
+    tools:context=".RegisterLogin.RegisterBandProfileActivity">
+
+    <Button
+        android:id="@+id/finish_button_register"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_login"
+        android:fontFamily="@font/source_sans_pro"
+        android:text="Finish "
+        android:textColor="@android:color/holo_blue_dark"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/bandName_editText_register"
+        app:layout_constraintStart_toStartOf="@+id/bandName_editText_register"
+        app:layout_constraintTop_toBottomOf="@+id/bandName_editText_register" />
+
+    <TextView
+        android:id="@+id/band_profile_textView_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="150dp"
+        android:fontFamily="@font/source_sans_pro"
+        android:text="Band Profile"
+        android:textColor="#4c84ff"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/imageView_register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/bandName_editText_register"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edittext_dropshadow"
+        android:ems="10"
+        android:fontFamily="@font/source_sans_pro"
+        android:hint="Enter Band Name"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_register"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView_register"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_register" />
+
+    <ImageView
+        android:id="@+id/imageView_register"
+        android:layout_width="220dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="120dp"
+        android:background="@drawable/rounded_button_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewSelect_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Picture"
+        android:textColor="#4c84ff"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_register"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_register"
+        app:layout_constraintStart_toStartOf="@+id/imageView_register"
+        app:layout_constraintTop_toTopOf="@+id/imageView_register" />
+
+    <ProgressBar
+        android:id="@+id/progressBar_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:minWidth="100dp"
+        android:minHeight="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

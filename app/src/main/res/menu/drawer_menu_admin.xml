@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_message_admin"
+            android:icon="@drawable/ic_message"
+            android:title="@string/string_inbox_navDrawerAdmin" />
+
+        <item
+            android:id="@+id/nav_send_message_admin"
+            android:icon="@drawable/ic_send"
+            android:title="@string/string_sendMessage_navDrawerAdmin" />
+
+        <item
+            android:id="@+id/nav_pendingBooks_admin"
+            android:icon="@drawable/ic_list"
+            android:title="@string/string_pendingBooks_navDrawerAdmin"
+            app:actionViewClass="android.widget.TextView"
+            />
+
+        <item
+            android:id="@+id/nav_addSchedule_admin"
+            android:icon="@drawable/ic_add_schedules"
+            android:title="@string/string_addSchedule_navDrawerAdmin"
+          />
+
+
+        <item
+            android:id="@+id/nav_payment_admin"
+            android:icon="@drawable/ic_payment"
+            android:title="@string/string_transactions_navDrawerAdmin" />
+
+
+    </group>
+
+
+    <item android:title="@string/string_othersTitle_navDrawerAdmin">
+        <menu>
+            <item
+                android:id="@+id/nav_bug_report_admin"
+                android:icon="@drawable/ic_bug_report"
+                android:title="@string/string_bugReport_navDrawerAdmin"
+                app:actionViewClass="android.widget.TextView"/>
+
+            <item
+                android:id="@+id/nav_about_me"
+                android:icon="@drawable/ic_about"
+                android:title="@string/string_about_navDrawerAdmin" />
+
+            <item
+                android:id="@+id/nav_log_out"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/string_logOut_navDrawerUser" />
+        </menu>
+
+    </item>
+</menu>

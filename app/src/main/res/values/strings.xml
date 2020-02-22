@@ -1,0 +1,112 @@
+<resources>
+
+
+    //=======Register/ Login============//
+    <string name="app_name">BandStudioApp</string>
+    <string name="enter_email_login">Enter Email</string>
+    <string name="enter_password_login">Enter Password</string>
+    <string name="show_password_login">Show Password</string>
+
+    //=====Google Map Api key====//
+    <string name="google_maps_api" translatable="false">AIzaSyBdgK2Ix7trM7TERsno3p_PHzqtUDcwwrk</string>
+    //=====Navigation Drawer====//
+    <string name="navigation_drawer_open">Open Navigation Drawer</string>
+    <string name="navigation_drawer_close">Close Navigation Drawer</string>
+
+
+
+
+    //Navigation Drawer Admin//
+    <string name="string_inbox_navDrawerAdmin">Inbox</string>
+    <string name="string_sendMessage_navDrawerAdmin">Send Message</string>
+    <string name="string_addSchedule_navDrawerAdmin">Add Schedule</string>
+    <string name="string_pendingBooks_navDrawerAdmin">Pending Books</string>
+    <string name="string_transactions_navDrawerAdmin">Transactions</string>
+    <string name="string_othersTitle_navDrawerAdmin">Others</string>
+    <string name="string_bugReport_navDrawerAdmin">View Bug Report</string>
+    <string name="string_about_navDrawerAdmin">Edit About</string>
+    <string name="string_logOut_navDrawerAdmin">Log Out</string>
+
+
+    //Navigation Drawer User//
+    <string name="string_inbox_navDrawerUser">Inbox</string>
+    <string name="string_sendMessage_navDrawerUser">Send Message</string>
+    <string name="string_payments_navDrawerUser">Payments</string>
+    <string name="string_othersTitle_navDrawerUser">Others</string>
+    <string name="string_location_navDrawerUser">Location</string>
+    <string name="string_bugReport_navDrawerUser">Bug Report</string>
+    <string name="string_about_navDrawerUser">About</string>
+    <string name="string_logOut_navDrawerUser">Log Out</string>
+
+
+
+
+
+
+    //Book Fragment Alert Dialog Menu//
+    <string name="search_menu_itemString_BookFragment">Search Menu</string>
+    <array name="SearchMenuItemsBookFragment">
+        <item>via Calendar</item>
+        <item>via Time Slot</item>
+        <item>via Day of week</item>
+    </array>
+
+
+    //Account Fragment Alert Dialog Menu//
+    <string name="edit_menu_itemString">Edit Menu</string>
+    <array name="EditMenuItemsAccountFragment">
+        <item>Change Profile Image</item>
+        <item>Edit Band Name</item>
+        <item>Add/Edit Hometown</item>
+        <item>Add/Edit Band Member/s</item>
+        <item>Add/Edit Genre</item>
+        <item>Add/Edit Description</item>
+    </array>
+
+
+    //========spinner choices====//
+
+    <string-array name="query_day_of_week_array">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+
+    <string-array name="primary_genre_array">
+        <item>Primary</item>
+        <item>Pop</item>
+        <item>Metal</item>
+        <item>Punk</item>
+        <item>Indie</item>
+        <item>Alternative</item>
+        <item>Rock</item>
+        <item>EDM</item>
+        <item>Hip-Hop</item>
+    </string-array>
+
+    <string-array name="secondary_genre_array">
+        <item>Secondary</item>
+        <item>Pop</item>
+        <item>Metal</item>
+        <item>Punk</item>
+        <item>Indie</item>
+        <item>Alternative</item>
+        <item>Rock</item>
+        <item>EDM</item>
+        <item>Hip-Hop</item>
+    </string-array>
+
+    <string-array name="instrument_list">
+        <item>Instrument</item>
+        <item>Vocals</item>
+        <item>Rhythm Guitar</item>
+        <item>Lead Guitar</item>
+        <item>Bass</item>
+        <item>Drums</item>
+        <item>Keyboard</item>
+    </string-array>
+</resources>

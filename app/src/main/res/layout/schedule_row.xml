@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+
+
+<androidx.cardview.widget.CardView
+    app:cardCornerRadius="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    android:id="@+id/backgroundItem_scheduleRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    >
+
+        <TextView
+            android:id="@+id/band_label_scheduleRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="Band:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/bandName_textView_scheduleRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/band_label_scheduleRow"
+            app:layout_constraintStart_toEndOf="@+id/band_label_scheduleRow"
+            app:layout_constraintTop_toTopOf="@+id/band_label_scheduleRow"
+            tools:text="Band Name" />
+
+        <TextView
+            android:id="@+id/startTime_scheduleFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/startTime_label_scheduleRow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/startTime_label_scheduleRow"
+            tools:text="Time" />
+
+        <TextView
+            android:id="@+id/endTime_scheduleFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/startTime_scheduleFragment"
+            app:layout_constraintStart_toStartOf="@+id/startTime_scheduleFragment"
+            app:layout_constraintTop_toBottomOf="@+id/startTime_scheduleFragment"
+            tools:text="Time" />
+
+        <TextView
+            android:id="@+id/startTime_label_scheduleRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="STime:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/bandName_textView_scheduleRow"
+            app:layout_constraintEnd_toStartOf="@+id/startTime_scheduleFragment"
+            app:layout_constraintTop_toTopOf="@+id/bandName_textView_scheduleRow" />
+
+        <TextView
+            android:id="@+id/endTime_label_scheduleRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text=" ETime:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/startTime_label_scheduleRow"
+            app:layout_constraintTop_toBottomOf="@+id/startTime_label_scheduleRow" />
+
+        <TextView
+            android:id="@+id/date_textView_scheduleRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="Date"
+            android:textColor="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/band_label_scheduleRow"
+            app:layout_constraintTop_toBottomOf="@+id/band_label_scheduleRow" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

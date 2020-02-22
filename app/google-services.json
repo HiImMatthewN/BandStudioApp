@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "120733895034",
+    "firebase_url": "https://texasstudioappbeta.firebaseio.com",
+    "project_id": "texasstudioappbeta",
+    "storage_bucket": "texasstudioappbeta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120733895034:android:41d993c3f962387dc9eec3",
+        "android_client_info": {
+          "package_name": "com.example.bandstudioapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "120733895034-ngsoumbdprarevh30l1bljeddor2vb9f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bandstudioapp",
+            "certificate_hash": "aebb7f0f53466c14bb45213200ff99a21c999327"
+          }
+        },
+        {
+          "client_id": "120733895034-svdm2kp3bnrrf6brl7p8jfnhs1k3ln84.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqV_bKa0Gv0gqFLqYsuZcdlUzaQSMwWPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120733895034-svdm2kp3bnrrf6brl7p8jfnhs1k3ln84.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

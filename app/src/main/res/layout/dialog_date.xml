@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.github.sundeepk.compactcalendarview.CompactCalendarView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_date_picker"
+    android:layout_width="fill_parent"
+    android:paddingRight="10dp"
+    android:paddingLeft="10dp"
+    android:layout_height="250dp"
+    app:compactCalendarTargetHeight="250dp"
+    app:compactCalendarTextSize="12sp"
+    app:compactCalendarBackgroundColor="#4c84ff"
+    app:compactCalendarTextColor="#fff"
+    app:compactCalendarCurrentSelectedDayBackgroundColor="#18a3fe"
+    app:compactCalendarCurrentDayBackgroundColor="@android:color/holo_blue_dark"
+    app:compactCalendarMultiEventIndicatorColor="#fff" />
