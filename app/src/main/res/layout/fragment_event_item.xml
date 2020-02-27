@@ -1,68 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:id="@+id/event_item">
+    android:fillViewport="true">
 
-    <androidx.cardview.widget.CardView
+
+    <LinearLayout
+        android:id="@+id/event_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        android:layout_margin="8dp">
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="400dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="20dp">
 
-            <ImageView
-                android:id="@+id/image_event_item"
-                android:src="@drawable/placeholder"
-                android:scaleType="centerCrop"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp" />
+                android:layout_height="400dp"
+                android:layout_marginBottom="10dp">
 
-            <TextView
-                android:id="@+id/title_event_item"
-                android:textColor="#262626"
-                android:layout_below="@id/image_event_item"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="16dp"
-                android:text="Brochure"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <ImageView
+                    android:id="@+id/event_poster"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder" />
 
-            <TextView
-                android:id="@+id/desc_event_item"
-                android:layout_below="@id/title_event_item"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:maxLines="3"
-                android:drawablePadding="10dp"
-                android:ellipsize="end"
-                android:text="Description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/date_event_item"
-                android:layout_below="@id/desc_event_item"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:maxLines="3"
-                android:drawablePadding="10dp"
-                android:ellipsize="end"
-                android:text="Description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/event_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/event_poster"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:textColor="#262626"
+                    android:textSize="16sp"
+                    tools:text="Event Name" />
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/event_venue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/event_date"
+                    android:layout_alignStart="@+id/event_date"
+                    android:layout_marginTop="5dp"
+                    android:drawablePadding="10dp"
+                    android:layout_marginStart="5dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    tools:text="Venue" />
+
+                <TextView
+                    android:id="@+id/event_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/event_time"
+                    android:layout_alignStart="@id/event_time"
+                    android:layout_marginTop="5dp"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    tools:text="Date" />
+
+                <TextView
+                    android:id="@+id/event_time_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/event_name"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="5dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:text="Time:"
+                    android:layout_marginTop="5dp"
+                    android:textColor="#262626"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/event_venue_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/event_date_label"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="5dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:text="Venue:"
+                    android:layout_marginTop="5dp"
+                    android:textColor="#262626"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/event_date_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/event_time_label"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="5dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:text="Date:"
+                    android:layout_marginTop="5dp"
+                    android:textColor="#262626"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/event_price_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/event_time"
+                    android:layout_marginEnd="5dp"
+                    android:layout_toStartOf="@id/event_price"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:text="Price:"
+                    android:textColor="#262626"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/event_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/event_time"
+                    android:layout_alignEnd="@id/event_poster"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    tools:text="Price" />
+
+                <TextView
+                    android:id="@+id/event_production"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/event_venue"
+                    android:layout_alignEnd="@id/event_poster"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    tools:text="Production" />
+
+                <TextView
+                    android:id="@+id/event_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/event_time_label"
+                    android:layout_alignBaseline="@id/event_time_label"
+                    android:fontFamily="@font/source_sans_pro"
+                    tools:text="Time" />
+
+            </RelativeLayout>
 
 
-    </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-</LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

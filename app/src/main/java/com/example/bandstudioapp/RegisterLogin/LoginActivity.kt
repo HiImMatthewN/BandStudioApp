@@ -77,16 +77,6 @@ class LoginActivity : AppCompatActivity() {
             email_login.requestFocus()
             return
         }
-//        if (email.isEmpty()) {
-//            email_login.requestFocus()
-//            return
-//        }
-//        if (password.isEmpty()) {
-//
-//            password_login.requestFocus()
-//            return
-//        }
-
 
         auth.signInWithEmailAndPassword(email, password)
             .addOnFailureListener {
@@ -113,10 +103,7 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
                     return@addOnCompleteListener
                 }
-                Toasty.success(
-                    this, "Login Success"
-                    , Toast.LENGTH_SHORT, true
-                ).show()
+
 
                 val intent = Intent(
                     this,
@@ -128,6 +115,9 @@ class LoginActivity : AppCompatActivity() {
             }
 
     }
+
+
+
 
 
     private fun loadRegisterActivity() {
@@ -191,13 +181,13 @@ class LoginActivity : AppCompatActivity() {
     private fun getToken() {
 
 
-       FirebaseMessaging.getInstance().subscribeToTopic("Bookings")
+        FirebaseMessaging.getInstance().subscribeToTopic("Bookings")
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val token = it.result?.token
-                    if(token != null)
-                    saveToken(token)
+                    if (token != null)
+                        saveToken(token)
                 }
             }
     }
@@ -211,14 +201,14 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if(auth.currentUser != null){
-            if(auth.uid == "zPaOMtY16oOar51SAZcdJf1Blv82"){
+        if (auth.currentUser != null) {
+            if (auth.uid == "zPaOMtY16oOar51SAZcdJf1Blv82") {
                 val intent = Intent(
                     this,
                     AdminActivity::class.java
                 )
                 startActivity(intent)
-            }else{
+            } else {
                 val intent = Intent(
                     this,
                     IntroActivity::class.java

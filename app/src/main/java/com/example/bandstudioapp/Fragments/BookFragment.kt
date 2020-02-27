@@ -1,5 +1,6 @@
 package com.example.bandstudioapp.Fragments
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.app.Dialog
@@ -38,18 +39,25 @@ import kotlinx.android.synthetic.main.fragment_book.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
+@SuppressLint("ConstantLocale")
 val monthFormat = SimpleDateFormat("MMMM ", Locale.getDefault())
 private lateinit var database: FirebaseDatabase
 private lateinit var auth: FirebaseAuth
 private lateinit var datePicker: CompactCalendarView
-
 var queryType: String? = null
 var isAnonymous = false
-var lastItemSelected:Int? = null
+var lastItemSelected: Int? = null
 
 
+@Suppress("DEPRECATION")
+@TargetApi(23)
+@SuppressLint(
+    "InflateParams"
+    , "SimpleDateFormat", "SetTextI18n"
+)
 class BookFragment : Fragment() {
     val adapter = GroupAdapter<GroupieViewHolder>()
     override fun onCreateView(
@@ -67,15 +75,14 @@ class BookFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         queryType = "NONE"
-
+        showBookAsAnonymousDialog()
         img_anonymous.visibility = View.GONE
-
+        empty_schedule_label.visibility = View.GONE
         recyclerView_fragmentBook.adapter = adapter
-
         fetchTodaySchedule()
         initSwipeMenuController()
         showCurrentDateTime()
-        showBookAsAnonymousDialog()
+
 
         book_schedule_FragmentBook.setOnClickListener {
             showSearchMenuDialog()
@@ -84,6 +91,7 @@ class BookFragment : Fragment() {
 
 
     }
+
 
     private fun initSwipeMenuController() {
 
@@ -108,7 +116,7 @@ class BookFragment : Fragment() {
                         Toasty.error(context!!, "Empty Slot", Toast.LENGTH_SHORT).show()
                         return
                     }
-                    viewSelectedSchedule2(selectedSchedule)
+                    viewSelectedSchedule(selectedSchedule)
                 }
             })
 
@@ -122,8 +130,8 @@ class BookFragment : Fragment() {
         })
 
     }
-    private fun bookSchedule(selectedSlot: ScheduleRow) {
 
+    private fun bookSchedule(selectedSlot: ScheduleRow) {
         val uid = auth.currentUser?.uid
         val date = selectedSlot.selectedDate
         val startTime = selectedSlot.scheduleSlotList.startTime
@@ -133,18 +141,18 @@ class BookFragment : Fragment() {
         if (startTime.length == 5) {
 
             formmatedTime = startTime.substring(0, 2)
-            if (!startTime.contains('P')) {
-                slot = formmatedTime.toInt() - 8
+            slot = if (!startTime.contains('P')) {
+                formmatedTime.toInt() - 8
             } else
-                slot = formmatedTime.toInt() + 4
+                formmatedTime.toInt() + 4
 
         } else if (startTime.length == 4) {
 
             formmatedTime = startTime.substring(0, 1)
-            if (!startTime.contains('P')) {
-                slot = formmatedTime.toInt() - 8
+            slot = if (!startTime.contains('P')) {
+                formmatedTime.toInt() - 8
             } else
-                slot = formmatedTime.toInt() + 4
+                formmatedTime.toInt() + 4
 
         }
 
@@ -197,44 +205,56 @@ class BookFragment : Fragment() {
 
         })
 
-        if (queryType == "DOW") {
-            val formmatedDate = date.substring(0, 3)
-            var newDate: String? = null
-            when (formmatedDate) {
-                "Mon" -> newDate = "Monday"
-                "Tue" -> newDate = "Tuesday"
-                "Wed" -> newDate = "Wednesday"
-                "Thu" -> newDate = "Thursday"
-                "Fri" -> newDate = "Friday"
-                "Sat" -> newDate = "Saturday"
-                "Sun" -> newDate = "Sunday"
-            }
-            queryBySelectedDow(newDate!!)
-        } else if (queryType == "TIME") {
-            val startItem = adapter.getItem(0) as ScheduleRow
-            val endItem = adapter.getItem(adapter.itemCount - 1) as ScheduleRow
-            val startTimeAdapter = startItem.scheduleSlotList.startTime
-            val endTimeAdapter = endItem.scheduleSlotList.endTime
-            var formattedSTimeAdapter: Int
-            var formattedETimeAdapter: Int
-            if (startTimeAdapter.length == 5) {
-                formattedSTimeAdapter = startTimeAdapter.substring(0, 2).toInt()
-            } else formattedSTimeAdapter = startTimeAdapter.substring(0, 1).toInt()
-            if (endTimeAdapter.length == 5) {
-                formattedETimeAdapter = endTimeAdapter.substring(0, 2).toInt()
-            } else formattedETimeAdapter = endTimeAdapter.substring(0, 1).toInt()
-
-            if (formattedSTimeAdapter < 8) {
-                formattedSTimeAdapter += 12
-            }
-            if (formattedETimeAdapter < 8) {
-                formattedETimeAdapter += 12
-            }
-            querySchedByTime(formattedSTimeAdapter, formattedETimeAdapter)
-        } else {
-            fetchSelectedSchedule(selectedSlot.selectedDate)
-        }
+        refreshList(selectedSlot)
     }
+
+    private fun refreshList(selectedSlot: ScheduleRow) {
+
+        when (queryType) {
+            "DOW" -> {
+                val formattedDate = selectedSlot.selectedDate.substring(7, 10)
+                var newDate: String? = null
+                when (formattedDate) {
+                    "Mon" -> newDate = "Monday"
+                    "Tue" -> newDate = "Tuesday"
+                    "Wed" -> newDate = "Wednesday"
+                    "Thu" -> newDate = "Thursday"
+                    "Fri" -> newDate = "Friday"
+                    "Sat" -> newDate = "Saturday"
+                    "Sun" -> newDate = "Sunday"
+                }
+                queryBySelectedDow(newDate!!)
+            }
+            "TIME" -> {
+                val startItem = adapter.getItem(0) as ScheduleRow
+                val endItem = adapter.getItem(adapter.itemCount - 1) as ScheduleRow
+                val startTimeAdapter = startItem.scheduleSlotList.startTime
+                val endTimeAdapter = endItem.scheduleSlotList.endTime
+                var formattedSTimeAdapter: Int
+                var formattedETimeAdapter: Int
+                formattedSTimeAdapter = if (startTimeAdapter.length == 5) {
+                    startTimeAdapter.substring(0, 2).toInt()
+                } else startTimeAdapter.substring(0, 1).toInt()
+                formattedETimeAdapter = if (endTimeAdapter.length == 5) {
+                    endTimeAdapter.substring(0, 2).toInt()
+                } else endTimeAdapter.substring(0, 1).toInt()
+
+                if (formattedSTimeAdapter < 8) {
+                    formattedSTimeAdapter += 12
+                }
+                if (formattedETimeAdapter < 8) {
+                    formattedETimeAdapter += 12
+                }
+                querySchedByTime(formattedSTimeAdapter, formattedETimeAdapter)
+            }
+            else -> {
+                fetchSelectedSchedule(selectedSlot.selectedDate)
+            }
+        }
+
+
+    }
+
     private fun verifyAvailability(selectedSlot: ScheduleRow): Boolean {
         val uid = auth.uid
         if (selectedSlot.scheduleSlotList.band.uid != uid
@@ -261,93 +281,9 @@ class BookFragment : Fragment() {
 
 
     }
+
+
     private fun viewSelectedSchedule(selectedSlot: ScheduleRow) {
-        val builder = AlertDialog.Builder(context)
-        val inflater = LayoutInflater.from(context)
-            .inflate(R.layout.fragment_book_view_schedule, null)
-        val bandPic: ImageView = inflater.findViewById(R.id.imageView_view_Schedule)
-        val bandName: TextView = inflater.findViewById(R.id.bandName_viewSchedule)
-        val endTime: TextView = inflater.findViewById(R.id.endTime_viewSchedule)
-        val startTime: TextView = inflater.findViewById(R.id.startTime_viewSchedule)
-        val spotifyIcon: ImageView = inflater.findViewById(R.id.social_media_spotify)
-        val facebookIcon: ImageView = inflater.findViewById(R.id.social_media_facebook)
-        val youtubeIcon: ImageView = inflater.findViewById(R.id.social_media_youtube)
-
-        val uid = auth.currentUser?.uid
-        if (selectedSlot.scheduleSlotList.band.isAnonymous &&
-            selectedSlot.scheduleSlotList.band.uid != uid
-        ) {
-            bandPic.setImageResource(R.drawable.anonymous_bandpic)
-            bandName.text = "Anonymous"
-
-            //Anonymous social medias
-            spotifyIcon.setOnClickListener {
-                Toasty.error(context!!, "Identity hidden", Toast.LENGTH_SHORT).show()
-            }
-            facebookIcon.setOnClickListener {
-                Toasty.error(context!!, "Identity hidden", Toast.LENGTH_SHORT).show()
-            }
-            youtubeIcon.setOnClickListener {
-                Toasty.error(context!!, "Identity hidden", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Picasso.get().load(selectedSlot.scheduleSlotList.band.profileImage)
-                .centerCrop().fit().into(bandPic)
-            bandName.text = selectedSlot.scheduleSlotList.band.bandName
-
-            val selectedBandUid = selectedSlot.scheduleSlotList.band.uid
-            //Launces Spotify
-            spotifyIcon.setOnClickListener {
-                database.getReference("SocialMedia/$selectedBandUid")
-                    .child("Spotify")
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(p0: DataSnapshot) {
-                            val spotifyLink = p0.getValue(String::class.java) ?: return
-
-                            SocialMediaLinkage.launchSpotifySocialMedia(spotifyLink)
-                        }
-
-                        override fun onCancelled(p0: DatabaseError) {}
-                    })
-
-            }
-            //Launches facebook
-            facebookIcon.setOnClickListener {
-                database.getReference("SocialMedia/$selectedBandUid")
-                    .child("Facebook")
-                    .addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(p0: DataSnapshot) {
-                            val facebookLink = p0.getValue(String::class.java) ?: return
-
-                            SocialMediaLinkage.launchFacebookSocialMedia(facebookLink)
-                        }
-
-                        override fun onCancelled(p0: DatabaseError) {}
-                    })
-
-            }
-            //Launches youtube
-            youtubeIcon.setOnClickListener {
-                database.getReference("SocialMedia/$selectedBandUid")
-                    .child("Youtube")
-                    .addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(p0: DataSnapshot) {
-                            val youtubeLink = p0.getValue(String::class.java) ?: return
-                            SocialMediaLinkage.launchYoutubeSocialMedia(youtubeLink)
-                        }
-
-                        override fun onCancelled(p0: DatabaseError) {}
-                    })
-            }
-        }
-        endTime.text = selectedSlot.scheduleSlotList.endTime
-        startTime.text = selectedSlot.scheduleSlotList.startTime
-
-        builder.setView(inflater).create().show()
-
-    }
-
-    private fun viewSelectedSchedule2(selectedSlot: ScheduleRow){
 
         val inflater = LayoutInflater.from(context)
             .inflate(R.layout.fragment_book_view_schedule, null)
@@ -429,7 +365,7 @@ class BookFragment : Fragment() {
         endTime.text = selectedSlot.scheduleSlotList.endTime
         startTime.text = selectedSlot.scheduleSlotList.startTime
 
-        val dialog =Dialog(context!!)
+        val dialog = Dialog(context!!)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(inflater)
         dialog.setCanceledOnTouchOutside(true)
@@ -437,19 +373,19 @@ class BookFragment : Fragment() {
         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         dialog.window?.setLayout(
             RelativeLayout.LayoutParams.WRAP_CONTENT,
-            RelativeLayout.LayoutParams.WRAP_CONTENT)
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        )
 
 
 
         dialog.show()
 
 
-
     }
-    private fun fetchTodaySchedule() {
 
+    private fun fetchTodaySchedule() {
         val uid = auth.currentUser?.uid
-        adapter.clear()
+
         val date = Date()
         val cal = Calendar.getInstance()
         cal.time = date
@@ -457,24 +393,28 @@ class BookFragment : Fragment() {
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)
-        val todayUnix = cal.time
+
+        val neWformat = SimpleDateFormat("MMM dd EEE yyyy")
 
 
-        val ref = database.getReference("Schedules/$todayUnix/").child("slot")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        val ref = database.getReference("Schedules/${neWformat.format(cal.time)}/").child("slot")
+        ref.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
+                adapter.clear()
                 p0.children.forEach {
+
                     val scheduleSlot = it.getValue(ScheduleSlot::class.java) ?: return
                     adapter.add(
                         ScheduleRow(
                             scheduleSlot,
-                            todayUnix.toString(), uid!!
+                            neWformat.format(cal.time), uid!!
                         )
 
                     )
 
                 }
+                checkAdapterIsEmpty()
 
             }
 
@@ -486,14 +426,23 @@ class BookFragment : Fragment() {
         })
 
     }
+    private fun checkAdapterIsEmpty(){
+        if(adapter.itemCount == 0)
+            empty_schedule_label.visibility = View.VISIBLE
+        else
+            empty_schedule_label.visibility = View.GONE
+
+    }
+
     private fun fetchSelectedSchedule(selectedDate: String) {
 
-        adapter.clear()
+
         val uid = auth.currentUser?.uid
         val ref = database.getReference("Schedules/$selectedDate/").child("slot")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
+                adapter.clear()
                 p0.children.forEach {
 
                     val scheduleSlot = it.getValue(ScheduleSlot::class.java) ?: return
@@ -504,6 +453,7 @@ class BookFragment : Fragment() {
                         )
                     )
                 }
+                checkAdapterIsEmpty()
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -513,7 +463,9 @@ class BookFragment : Fragment() {
 
         })
 
+
     }
+
     private fun fetchAvailableDates() {
 
         val ref1 = database.getReference("Schedules/")
@@ -536,23 +488,24 @@ class BookFragment : Fragment() {
 
 
     }
+
     private fun querySchedByTime(startTime: Int, endTime: Int) {
 
-        adapter.clear()
+
         val uid = auth.currentUser?.uid
-        val format = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+        val newFormat = SimpleDateFormat("MMM dd EEE yyyy")
         val ref = database.getReference("Schedules")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
-
+                adapter.clear()
                 p0.children.forEach {
                     val schedule = it.getValue(Schedule::class.java) ?: return
-                    val formattedTime = format.format(schedule.epouchValue)
+                    val formattedTime = newFormat.format(schedule.epouchValue)
 
                     val ref1 = database.getReference("Schedules/$formattedTime/slot")
 
-                    ref1.addListenerForSingleValueEvent(object : ValueEventListener {
+                    ref1.addValueEventListener(object : ValueEventListener {
 
 
                         override fun onDataChange(p0: DataSnapshot) {
@@ -564,19 +517,22 @@ class BookFragment : Fragment() {
                                 slots.add(slot!!)
 
                             }
-
                             for (i in (startTime - 8) until (endTime - 8)) {
-                                adapter.add(ScheduleRow(slots[i], formattedTime, uid!!))
+                                adapter.add(
+                                    ScheduleRow(
+                                        slots[i],
+                                        formattedTime,
+                                        uid!!
+                                    )
+                                )
 
                             }
+                            checkAdapterIsEmpty()
                         }
-
 
                         override fun onCancelled(p0: DatabaseError) {
 
                         }
-
-
                     })
 
 
@@ -589,35 +545,46 @@ class BookFragment : Fragment() {
             }
 
 
-        })
+        }
+        )
 
         queryType = "TIME"
 
 
     }
+
+
     private fun queryBySelectedDow(dayOfWeek: String) {
 
-        adapter.clear()
+
         val uid = auth.currentUser?.uid
         val formatDoW = SimpleDateFormat("EEEE")
-        val format = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+        val newFormat = SimpleDateFormat("MMM dd EEE yyyy")
         val ref = database.getReference("Schedules")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
-                p0.children.forEach {
-                    val schedule = it.getValue(Schedule::class.java) ?: return
+                checkAdapterIsEmpty()
+                adapter.clear()
+                p0.children.forEach { snapshot ->
+                    val schedule = snapshot.getValue(Schedule::class.java) ?: return
                     val formattedDoW = formatDoW.format(schedule.epouchValue)
 
                     if (formattedDoW == dayOfWeek) {
-                        val formattedEpoch = format.format(schedule.epouchValue)
+                        val formattedEpoch = newFormat.format(schedule.epouchValue)
                         val ref1 = database.getReference("Schedules/$formattedEpoch/slot")
                         ref1.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(p0: DataSnapshot) {
 
                                 p0.children.forEach {
                                     val slot = it.getValue(ScheduleSlot::class.java)
-                                    adapter.add(ScheduleRow(slot!!, formattedEpoch, uid!!))
+                                    adapter.add(
+                                        ScheduleRow(
+                                            slot!!,
+                                            newFormat.format(schedule.epouchValue),
+                                            uid!!
+                                        )
+                                    )
 
                                 }
 
@@ -640,10 +607,11 @@ class BookFragment : Fragment() {
 
 
         })
-
         queryType = "DOW"
+
     }
-    @TargetApi(23)
+
+
     private fun showTimePickerEnd(timeStart: Int) {
 
         //Select End Time
@@ -674,7 +642,8 @@ class BookFragment : Fragment() {
             .setView(inflaterEnd).create().show()
 
     }
-    @TargetApi(23)
+
+
     private fun showTimePickerStart() {
 
 
@@ -706,6 +675,7 @@ class BookFragment : Fragment() {
 
             .setView(inflaterStart).create().show()
     }
+
     private fun showSearchMenuDialog() {
 
         val builder = AlertDialog.Builder(activity)
@@ -725,6 +695,7 @@ class BookFragment : Fragment() {
 
 
     }
+
     private fun showDayOfWeekDialog() {
 
         val inflater = LayoutInflater.from(context).inflate(R.layout.spinner_query_dayofweek, null)
@@ -738,49 +709,64 @@ class BookFragment : Fragment() {
         dayOfWeekSpinnr.adapter = adapterDayOfWeek
         val builder = AlertDialog.Builder(context)
             .setTitle("Select Day Of Week")
-            .setPositiveButton("Search", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    queryBySelectedDow(dayOfWeekSpinnr.selectedItem.toString())
-                }
-            })
+            .setPositiveButton("Search"
+            ) { _, _ -> queryBySelectedDow(dayOfWeekSpinnr.selectedItem.toString()) }
 
 
         builder.setView(inflater).create().show()
 
 
     }
+
     private fun showSnackBar() {
 
         Snackbar.make(
             activity?.findViewById(android.R.id.content)!!,
             "Book Request Sent",
-            Snackbar.LENGTH_LONG
-        ).setAction("Undo",object :View.OnClickListener{
-            override fun onClick(v: View?) {
-//             undoBook()
-            }
-        }).show()
+            5000
+        ).setAction("Undo") { undoBook() }.show()
 
     }
 
     //To be continued
-    private fun undoBook(){
-        Toast.makeText(context,""+ lastItemSelected,Toast.LENGTH_SHORT).show()
+    private fun undoBook() {
+        val uid = auth.currentUser?.uid
         val lastSelectedItem = adapter.getItem(lastItemSelected!!) as ScheduleRow
-        val ref = database.getReference("Schedules/${lastSelectedItem.selectedDate}/slot/")
+        val getRawTime = lastSelectedItem.scheduleSlotList.startTime
+        val date = lastSelectedItem.selectedDate
+        var slot: Int
+        slot = if (getRawTime.length == 5) {
+            getRawTime.substring(0, 2).toInt()
+        } else getRawTime.substring(0, 1).toInt()
+        if (getRawTime.contains("PM"))
+            slot += 4
+        else slot -= 8
+        val ref = database.getReference("Schedules/$date/slot/$slot/band")
 
+        val updates = HashMap<String, Any>()
+        updates["anonymous"] = false
+        updates["bandName"] = "N/A"
+        updates["profileImage"] = ""
+        updates["state"] = ""
+        updates["uid"] = ""
+        ref.updateChildren(updates)
+        refreshList(lastSelectedItem)
+        val pendingRef = database.getReference("PendingSchedules/$uid/$date/slot/$slot/band")
+        pendingRef.removeValue()
 
     }
-    private fun showDatePicker() {
 
+    private fun showDatePicker() {
         var monthTitle: String?
         showDialog()
         fetchAvailableDates()
 
-
         datePicker.setListener(object : CompactCalendarView.CompactCalendarViewListener {
             override fun onDayClick(dateClicked: Date) {
-                fetchSelectedSchedule(dateClicked.toString())
+                val format = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                val neWformat = SimpleDateFormat("MMM dd EEE yyyy")
+                val rawDate = format.parse(dateClicked.toString())
+                fetchSelectedSchedule(neWformat.format(rawDate!!))
 
 
             }
@@ -797,6 +783,8 @@ class BookFragment : Fragment() {
 
 
     }
+
+
     private fun showDialog() {
         val v = LayoutInflater.from(context)
             .inflate(R.layout.dialog_date, null)
@@ -806,35 +794,31 @@ class BookFragment : Fragment() {
         AlertDialog.Builder(context)
             .setView(v)
             .setTitle("Choose Date")
-            .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-
-                }
-            }
-            )
+            .setPositiveButton(
+                android.R.string.ok
+            ) { _, _ -> }
             .create().show()
 
     }
+
     private fun showBookAsAnonymousDialog() {
 
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Book as Anonymous?").setCancelable(false)
-            .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    isAnonymous = true
-                    img_anonymous.visibility = View.VISIBLE
-
-                }
-            })
-            .setNegativeButton("No", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    isAnonymous = false
-                    img_anonymous.visibility = View.GONE
-                }
-            }).create().show()
+            .setPositiveButton(
+                "Yes"
+            ) { _, _ ->
+                isAnonymous = true
+                img_anonymous.visibility = View.VISIBLE
+            }
+            .setNegativeButton("No") { _, _ ->
+                isAnonymous = false
+                img_anonymous.visibility = View.GONE
+            }.create().show()
 
 
     }
+
     private fun showCurrentDateTime() {
 
         val date = System.currentTimeMillis()

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,7 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Admin.AdminActivity"></activity>
+        <activity android:name=".Admin.AdminActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -41,9 +47,11 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <service android:name=".FirebaseMessagingService">
+        <service android:name=".FirebaseMessagingService"
+            android:permission="com.google.android.c2dm.permission.SEND">
         <intent-filter>
-            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
         </intent-filter>
         </service>
 

@@ -21,6 +21,31 @@
         android:textStyle="bold"
         android:background="@drawable/edittext_dropshadow_full"
         />
+    <EditText
+        android:id="@+id/androidOS_editText_bugReport"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/source_sans_pro"
+        android:hint="Android OS(Name or no.)"
+        android:padding="5dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@drawable/edittext_dropshadow_full"
+        />
+    <EditText
+        android:id="@+id/phoneModel_editText_bugReport"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/source_sans_pro"
+        android:hint="Phone Model"
+        android:padding="5dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@drawable/edittext_dropshadow_full"
+        />
+
 
     <EditText
         android:id="@+id/description_editText_bugReport"

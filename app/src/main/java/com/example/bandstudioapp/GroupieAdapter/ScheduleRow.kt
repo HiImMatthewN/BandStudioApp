@@ -1,5 +1,6 @@
 package com.example.bandstudioapp.GroupieAdapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import com.example.bandstudioapp.Model.ScheduleSlot
 import com.example.bandstudioapp.R
@@ -16,12 +17,14 @@ class ScheduleRow(val scheduleSlotList: ScheduleSlot, val selectedDate: String, 
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
 
         val imageUrl = scheduleSlotList.band.profileImage
 //        val target = viewHolder.itemView.bandPic_scheduleRow
-
-
+//        val format = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+//        val neWformat = SimpleDateFormat("MMM dd EEE yyyy")
+//        val rawDate = format.parse(selectedDate)
         viewHolder.itemView.startTime_scheduleFragment.text = scheduleSlotList.startTime
         viewHolder.itemView.endTime_scheduleFragment.text = scheduleSlotList.endTime
         viewHolder.itemView.date_textView_scheduleRow.text = selectedDate
@@ -42,6 +45,8 @@ class ScheduleRow(val scheduleSlotList: ScheduleSlot, val selectedDate: String, 
         else if(scheduleSlotList.band.bandName == "N/A"){
             viewHolder.itemView.backgroundItem_scheduleRow.setBackgroundColor(Color.parseColor("#1DB954"))
         }
+
+
 
     }
 

@@ -1,13 +1,11 @@
 package com.example.bandstudioapp.Admin
 
+
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -17,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.bandstudioapp.Fragments.monthFormat
 import com.example.bandstudioapp.Model.ClientTransaction
 import com.example.bandstudioapp.Model.Schedule
@@ -31,6 +33,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
+import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_admin.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AdminActivity : AppCompatActivity() {
@@ -38,42 +46,51 @@ class AdminActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var auth: FirebaseAuth
     private lateinit var datePicker: CompactCalendarView
+    private val FCM_API = "https://fcm.googleapis.com/fcm/send"
+    private val serverKey = "key=" +
+            "AAAAHBxNCXo:APA91bGvI7pzBveKXeFXyuj_UyNWAqUz0y_Pxk83QePy1Yii2OW47XSYp5BBsB-d45AA35" +
+            "_nVbX6f1kpUbDRfCXrqMw0TIPYWlDhEwZ1aQzWOHwz_ltYqnNj9Nv5NJJZOxcBuRYiERlo"
+    private val contentType = "application/json"
 
-
-    companion object {
-
-        val CHANNEL_ID = "texas_studio"
-        val CHANNEL_NAME = "Texas Studio"
-        val CHANNEL_DESCRIPTION = "Texas Studio Notifications"
-
+    private val requestQueue: RequestQueue by lazy {
+        Volley.newRequestQueue(this)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID, CHANNEL_NAME
-                , NotificationManager.IMPORTANCE_HIGH
-            )
-            channel.description = CHANNEL_DESCRIPTION
-            val manager = getSystemService(NotificationManager::class.java)
-            manager?.createNotificationChannel(channel)
-
-
-        }
         database = FirebaseDatabase.getInstance()
         auth = FirebaseAuth.getInstance()
 
+
+
+
+
         setFullScreen()
         setContentView(R.layout.activity_admin)
-        setNavigationDrawer()
+        setNavigationDrawer(savedInstanceState)
+//        initializeBind()
         initiliazeCount()
 
+        send_notification_button.setOnClickListener {
+
+            if(body_notification.text.isNotEmpty() && subject_notification.text.isNotEmpty()){
+                val notifmsg = body_notification.text.toString().trim()
+                val bodymsg = subject_notification.text.toString().trim()
+                setUpMessage(notifmsg,bodymsg)
+
+
+            }
+
+
+
+
+        }
 
 
     }
+
 
 
 
@@ -85,7 +102,12 @@ class AdminActivity : AppCompatActivity() {
         pendingBooksRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
-                pendingBooks.text = p0.childrenCount.toString()
+
+                val count = p0.childrenCount
+                if (count < 1)
+                    pendingBooks.visibility = View.INVISIBLE
+                else
+                    pendingBooks.text = count.toString()
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -100,7 +122,11 @@ class AdminActivity : AppCompatActivity() {
         bugReportRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
-                bugReport.text = p0.childrenCount.toString()
+                val count = p0.childrenCount
+                if (count < 1)
+                    bugReport.visibility = View.INVISIBLE
+                else
+                    bugReport.text = count.toString()
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -123,7 +149,7 @@ class AdminActivity : AppCompatActivity() {
 
     }
 
-    private fun setNavigationDrawer() {
+    private fun setNavigationDrawer(savedInstanceState: Bundle?) {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.admin_toolBar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -137,6 +163,11 @@ class AdminActivity : AppCompatActivity() {
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
+
+//        if(savedInstanceState == null){
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.fragment_container_nav_admin,AdminFragment()).commit()
+//        }
 
     }
 
@@ -195,6 +226,52 @@ class AdminActivity : AppCompatActivity() {
 
 
     }
+    private fun setUpMessage(notifMessage:String,notifBody:String){
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic("/topics/Bookings")
+
+
+
+
+                val topic = "/topics/Bookings"
+                val notification = JSONObject()
+                val notificationBody = JSONObject()
+
+                try {
+
+                    notificationBody.put("title", notifBody)
+                    notificationBody.put("message", notifMessage)
+                    notification.put("to", topic)
+                    notification.put("data", notificationBody)
+                } catch (e: JSONException) {
+                    //message
+                }
+                sendNotification(notification)
+
+
+
+
+    }
+    private fun sendNotification(notification:JSONObject) {
+        val jsonObjectRequest = object : JsonObjectRequest(FCM_API,notification, Response.Listener<JSONObject> {
+                response ->
+            body_notification.setText("")
+        }, Response.ErrorListener {
+            Toast.makeText(this,"Request Error",Toast.LENGTH_SHORT).show()
+        }){
+            override fun getHeaders(): MutableMap<String, String> {
+                val params =HashMap<String,String>()
+                params["Authorization"] = serverKey
+                params["Content-Type"] = contentType
+                return params
+            }
+        }
+        requestQueue.add(jsonObjectRequest)
+
+
+    }
+
 
     private fun showDialog() {
         val v = LayoutInflater.from(this)
@@ -244,7 +321,10 @@ class AdminActivity : AppCompatActivity() {
     private fun addsSchedule(dateClicked: Date) {
         datePicker.addEvent(Event(Color.GREEN, dateClicked.time, "Available Schedule"))
 
-        val ref = database.getReference("Schedules/$dateClicked")
+//    val format = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+        val format = SimpleDateFormat("MMM dd EEE yyyy")
+        val date = format.format(dateClicked)
+        val ref = database.getReference("Schedules/$date")
         val schedList = mutableListOf<ScheduleSlot>()
 
         for (i in 0 until 14) {
@@ -276,13 +356,13 @@ class AdminActivity : AppCompatActivity() {
 
         ref.setValue(Schedule(dateClicked.time, schedList)).addOnCompleteListener {
             if (it.isSuccessful) {
-                Toast.makeText(
-                    this@AdminActivity, "Schedule Added",
+                Toasty.success(
+                    this@AdminActivity, "Schedule $date Added",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
                 Toast.makeText(
-                    this@AdminActivity, "Schedule not added",
+                    this@AdminActivity, "Schedule $date not added",
                     Toast.LENGTH_SHORT
                 ).show()
             }

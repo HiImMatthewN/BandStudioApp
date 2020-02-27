@@ -1,5 +1,6 @@
 package com.example.bandstudioapp.Fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog.Builder
 import android.content.DialogInterface
@@ -32,10 +33,11 @@ import kotlinx.android.synthetic.main.fragment_account.*
 import java.util.*
 
 
+@SuppressLint("InflateParams")
 class AccountFragment : Fragment() {
 
 
-    var selectedPhotoUri: Uri? = null
+    private var selectedPhotoUri: Uri? = null
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private lateinit var storage: FirebaseStorage
@@ -66,6 +68,7 @@ class AccountFragment : Fragment() {
             showEditMenu()
         }
         onClickSocialMedia()
+
     }
 
 
@@ -114,22 +117,15 @@ class AccountFragment : Fragment() {
         adapterInstrument.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         iSpinnr.adapter = adapterInstrument
 
-        builder.setPositiveButton("ADD", object : DialogInterface.OnClickListener {
-
-            override fun onClick(dialog: DialogInterface?, which: Int) {
-
-                sendBandMemberToFireBase(
-                    editText.text.toString(),
-                    iSpinnr.selectedItem.toString()
-                )
-
-            }
-        })
-        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener {
-            override fun onClick(dialog: DialogInterface?, which: Int) {
-                dialog?.dismiss()
-            }
-        })
+        builder.setPositiveButton("ADD"
+        ) { _, _ ->
+            sendBandMemberToFireBase(
+                editText.text.toString(),
+                iSpinnr.selectedItem.toString()
+            )
+        }
+        builder.setNegativeButton("Cancel"
+        ) { dialog, _ -> dialog?.dismiss() }
         builder.setView(inflater)
         builder.create().show()
 
@@ -137,8 +133,8 @@ class AccountFragment : Fragment() {
 
     private fun sendBandMemberToFireBase(name: String, instrument: String) {
 
-        if(instrument == "Instrument" || name == ""){
-            Toasty.error(context!!,"Invalid",Toast.LENGTH_SHORT).show()
+        if (instrument == "Instrument" || name == "") {
+            Toasty.error(context!!, "Invalid", Toast.LENGTH_SHORT).show()
             return
         }
         val uid = auth.currentUser?.uid
@@ -172,10 +168,11 @@ class AccountFragment : Fragment() {
         loadAccountData()
     }
 
+
     private fun addGenre() {
         val builder = Builder(context).setTitle("Add Genre")
         val inflater: View = layoutInflater.inflate(R.layout.spinner_dialog_box, null)
-        val pSpinnr = inflater.findViewById<Spinner>(R.id.primary_genre_spinner)
+        val pSpinner = inflater.findViewById<Spinner>(R.id.primary_genre_spinner)
         val mSpinner = inflater.findViewById<Spinner>(R.id.secondary_genre_spinner)
         val adapterPrimary = ArrayAdapter<String>(
             context!!, android.R.layout.simple_spinner_item,
@@ -188,14 +185,14 @@ class AccountFragment : Fragment() {
 
         adapterPrimary.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         adapterSecondary.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        pSpinnr.adapter = adapterPrimary
+        pSpinner.adapter = adapterPrimary
         mSpinner.adapter = adapterSecondary
 
         builder.setPositiveButton("ADD", object : DialogInterface.OnClickListener {
 
             override fun onClick(dialog: DialogInterface?, which: Int) {
-                if (pSpinnr.selectedItem.toString().equals("Primary")
-                    && mSpinner.selectedItem.toString().equals("Secondary")
+                if (pSpinner.selectedItem.toString() == "Primary"
+                    && mSpinner.selectedItem.toString() == "Secondary"
                 ) {
                     Toasty.error(
                         context!!
@@ -203,33 +200,30 @@ class AccountFragment : Fragment() {
                     ).show()
                     return
                 }
-                if (pSpinnr.selectedItem.toString().equals("Primary")) {
+                if (pSpinner.selectedItem.toString() == "Primary") {
                     sendGenreToFireBase(
                         mSpinner.selectedItem.toString(),
                         ""
                     )
                     return
                 }
-                if (mSpinner.selectedItem.toString().equals("Secondary")) {
+                if (mSpinner.selectedItem.toString() == "Secondary") {
                     sendGenreToFireBase(
-                        pSpinnr.selectedItem.toString(),
+                        pSpinner.selectedItem.toString(),
                         ""
                     )
                     return
                 }
                 sendGenreToFireBase(
-                    pSpinnr.selectedItem.toString(),
+                    pSpinner.selectedItem.toString(),
                     mSpinner.selectedItem.toString()
                 )
 
 
             }
         })
-        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener {
-            override fun onClick(dialog: DialogInterface?, which: Int) {
-                dialog?.dismiss()
-            }
-        })
+        builder.setNegativeButton("Cancel"
+        ) { dialog, _ -> dialog?.dismiss() }
         builder.setView(inflater)
         builder.create().show()
 
@@ -276,20 +270,14 @@ class AccountFragment : Fragment() {
         showCurrentMessage(input)
 
         builder.setView(input)
-            .setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    val newDescription = input.text.toString().trim()
-                    val uid = auth.currentUser?.uid ?: ""
-                    database.getReference("/bands/$uid/description").setValue(newDescription)
-                    loadAccountData()
-                }
-            })
-        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener {
-
-            override fun onClick(dialog: DialogInterface?, which: Int) {
-                dialog?.cancel()
+            .setPositiveButton("OK") { _, _ ->
+                val newDescription = input.text.toString().trim()
+                val uid = auth.currentUser?.uid ?: ""
+                database.getReference("/bands/$uid/description").setValue(newDescription)
+                loadAccountData()
             }
-        })
+        builder.setNegativeButton("Cancel"
+        ) { dialog, _ -> dialog?.cancel() }
 
         builder.create().show()
 
@@ -352,12 +340,8 @@ class AccountFragment : Fragment() {
 
             }
         })
-        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener {
-
-            override fun onClick(dialog: DialogInterface?, which: Int) {
-                dialog?.cancel()
-            }
-        })
+        builder.setNegativeButton("Cancel"
+        ) { dialog, _ -> dialog?.cancel() }
 
         builder.create().show()
 
@@ -385,11 +369,11 @@ class AccountFragment : Fragment() {
             selectedPhotoUri = data.data
             Picasso.get().load(selectedPhotoUri).centerCrop().fit()
                 .into(circleImage_accountFragment)
-            uploadImageToFirebaseStorage()
+            uploadImageToFireBaseStorage()
         }
     }
 
-    fun uploadImageToFirebaseStorage() {
+   private fun uploadImageToFireBaseStorage() {
         if (selectedPhotoUri == null) {
             return
         }
@@ -398,12 +382,13 @@ class AccountFragment : Fragment() {
 
         ref.putFile(selectedPhotoUri!!).addOnSuccessListener {
             ref.downloadUrl.addOnSuccessListener {
-                updateUserToFirebaseDatabase(it.toString())
+                updateUserToFireBaseDatabase(it.toString())
             }
         }
     }
 
-    fun updateUserToFirebaseDatabase(profileImageUrl: String) {
+
+    private fun updateUserToFireBaseDatabase(profileImageUrl: String) {
         val uid = auth.currentUser?.uid ?: ""
         val ref = database.getReference("/clients/$uid")
 
@@ -411,7 +396,7 @@ class AccountFragment : Fragment() {
         cancelDelete = false
     }
 
-    fun deletePriorBandPic() {
+    private fun deletePriorBandPic() {
         val currentUser = auth.uid
         val ref = database.getReference("/clients/$currentUser")
         ref.addValueEventListener(object : ValueEventListener {
@@ -450,6 +435,7 @@ class AccountFragment : Fragment() {
         super.onResume()
         loadAccountData()
     }
+
     fun loadAccountData() {
 
         val currentUser = auth.uid
@@ -462,7 +448,7 @@ class AccountFragment : Fragment() {
 
                 Picasso.get().load(account.profileImageUrl).centerCrop().fit()
                     .into(circleImage_accountFragment)
-                bandName_viewSchedule.setText(account.bandName)
+                bandName_viewSchedule.text = account.bandName
 
 
                 val bandRef = database.getReference("/bands/${account.uid}")
@@ -495,7 +481,7 @@ class AccountFragment : Fragment() {
 
     }
 
-    fun loadAccountDataOnCreate() {
+    private fun loadAccountDataOnCreate() {
 
         val currentUser = auth.uid
         val ref = database.getReference("/clients/$currentUser")
@@ -508,7 +494,7 @@ class AccountFragment : Fragment() {
                     .into(circleImage_accountFragment)
 
 
-                bandName_viewSchedule.setText(account.bandName)
+                bandName_viewSchedule.text = account.bandName
 
                 val bandRef = database.getReference("/bands/${account.uid}")
                 bandRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -540,56 +526,50 @@ class AccountFragment : Fragment() {
 
     }
 
-    private fun onClickSocialMedia(){
+    private fun onClickSocialMedia() {
         val input = EditText(context)
         input.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
 
 
-      spotifyLink_accountFragment.setOnClickListener {
-          sendLinkToFireBase(input,"Spotify Link(Https:/","Spotify")
+        spotifyLink_accountFragment.setOnClickListener {
+            sendLinkToFireBase(input, "Spotify Link(Https:/", "Spotify")
 
-      }
+        }
         facebookLink_accountFragment.setOnClickListener {
-            sendLinkToFireBase(input,"FB Page ID","Facebook")
+            sendLinkToFireBase(input, "FB Page ID", "Facebook")
 
         }
         youtubeLink_accountFragment.setOnClickListener {
-            sendLinkToFireBase(input,"Youtube Channel Link(Https:/","Youtube")
+            sendLinkToFireBase(input, "Youtube Channel Link(Https:/", "Youtube")
         }
 
 
     }
-    private fun sendLinkToFireBase(editText:EditText,hint:String, socialMediaSelected:String){
+
+    private fun sendLinkToFireBase(editText: EditText, hint: String, socialMediaSelected: String) {
 
         val builder = Builder(context)
         editText.hint = hint
 
-        if(editText.parent != null){
-            val parent:ViewGroup= editText.parent as ViewGroup
+        if (editText.parent != null) {
+            val parent: ViewGroup = editText.parent as ViewGroup
             parent.removeView(editText)
             editText.text.clear()
         }
 
 
         builder.setView(editText)
-            .setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    val linkEntered = editText.text.toString().trim()
-                    val uid = auth.currentUser?.uid?: ""
-                    database.getReference("SocialMedia/$uid/$socialMediaSelected")
-                        .setValue(linkEntered)
-
-                }
-            })
-        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener {
-
-            override fun onClick(dialog: DialogInterface?, which: Int) {
-                dialog?.cancel()
+            .setPositiveButton("OK") { _, _ ->
+                val linkEntered = editText.text.toString().trim()
+                val uid = auth.currentUser?.uid ?: ""
+                database.getReference("SocialMedia/$uid/$socialMediaSelected")
+                    .setValue(linkEntered)
             }
-        })
+        builder.setNegativeButton(
+            "Cancel"
+        ) { dialog, _ -> dialog?.cancel() }
 
         builder.create().show()
-
 
 
     }

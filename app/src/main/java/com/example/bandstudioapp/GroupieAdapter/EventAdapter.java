@@ -1,5 +1,6 @@
 package com.example.bandstudioapp.GroupieAdapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,17 +19,22 @@ import java.util.ArrayList;
 
 public class EventAdapter extends PagerAdapter {
     private ArrayList<Event> models;
-    private LayoutInflater layoutInflater;
     private Context context;
 
     public EventAdapter(ArrayList<Event> models, Context context) {
+
         this.models = models;
+        notifyDataSetChanged();
         this.context = context;
+
+
     }
 
     @Override
     public int getCount() {
-        return models.size();
+            return models.size();
+
+
     }
 
     @Override
@@ -36,27 +42,36 @@ public class EventAdapter extends PagerAdapter {
         return view.equals(object);
     }
 
+    @SuppressLint("SetTextI18n")
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
-        layoutInflater = LayoutInflater.from(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
         View view = layoutInflater.inflate(R.layout.fragment_event_item, container, false);
 
-        ImageView imageView;
-        TextView title, desc,date;
+        ImageView posterIV;
+        TextView titleTV, dateTV
+                ,venueTV,priceTV
+                ,productionNameTV,timeTV;
 
 
-        imageView = view.findViewById(R.id.image_event_item);
-        title = view.findViewById(R.id.title_event_item);
-        desc = view.findViewById(R.id.desc_event_item);
-        date = view.findViewById(R.id.date_event_item);
+        posterIV = view.findViewById(R.id.event_poster);
+        titleTV = view.findViewById(R.id.event_name);
+        dateTV = view.findViewById(R.id.event_date);
+        venueTV = view.findViewById(R.id.event_venue);
+        priceTV = view.findViewById(R.id.event_price);
+        productionNameTV = view.findViewById(R.id.event_production);
+        timeTV  = view.findViewById(R.id.event_time);
 
-        Picasso.get().load(models.get(position).getEventImageUrl()).into(imageView);
-        title.setText(models.get(position).getEventName());
-        desc.setText(models.get(position).getEventVenue());
-        date.setText(models.get(position).getEventDate());
-
+        Picasso.get().load(models.get(position).getEventPosterUrl()).into(posterIV);
+        titleTV.setText(models.get(position).getEventName());
+        dateTV.setText(models.get(position).getEventVenue());
+        venueTV.setText(models.get(position).getEventDate());
+        priceTV.setText("₱" +models.get(position).getEventPrice());
+        productionNameTV.setText(models.get(position).getProductionName());
+        timeTV.setText(models.get(position).getEventTime());
         container.addView(view, 0);
+
         return view;
     }
 

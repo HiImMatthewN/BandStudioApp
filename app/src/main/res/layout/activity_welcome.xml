@@ -52,7 +52,16 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/transparent"
                 android:elevation="4dp"
-                 />
+                >
+                <Button
+                    android:id="@+id/add_event_item_Button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="5dp"
+                    android:layout_gravity ="end"
+                    android:background="@android:color/white"/>
+            </androidx.appcompat.widget.Toolbar>
+
 
             <FrameLayout
                 android:id="@+id/fragment_container_nav"
